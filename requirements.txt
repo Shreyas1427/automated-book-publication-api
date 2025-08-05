@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+playwright
+chromadb
+python-dotenv
+google-generativeai
+openai-whisper
+python-multipart
