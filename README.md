@@ -1,96 +1,113 @@
-Automated Book Publication Workflow (Backend API)
-This project provides a complete, multi-agent backend system designed to automate the initial stages of book publication. It features a robust API to scrape content from a web URL, leverage AI agents for rewriting and reviewing, and support a full human-in-the-loop (HITL) workflow with versioning, semantic search, and voice command capabilities.
+# 📚 Automated Book Publication Workflow (Backend API)
 
-System Architecture
-The workflow is designed as a sequential pipeline of agents and data stores, managed by a central FastAPI application. This modular architecture ensures that each component is independent and responsible for a single task.
+This project is a complete, multi-agent backend system designed to automate the initial stages of book publication. It features a robust API to scrape content from a web URL, leverage AI agents for rewriting and reviewing, and support a full human-in-the-loop (HITL) workflow with versioning, semantic search, and voice command capabilities.
 
-Data Flow:
-URL ➔ Scraper Agent ➔ ChromaDB (Raw) ➔ AI Writer ➔ ChromaDB (Spun) ➔ AI Reviewer ➔ ChromaDB (Reviewed) ➔ Human Editor ➔ ChromaDB (Edited)
+---
 
-Core Technologies
-Backend: Python, FastAPI
+## 🚀 Features
 
-Web Scraping: Playwright
+- **Multi-Agent AI Pipeline**  
+  Sequentially uses an AI Writer and an AI Reviewer to process content, ensuring higher quality output.
 
-AI Agents: Groq API (Llama 3)
+- **Semantic Search**  
+  Leverages a vector database (ChromaDB) to allow for searching by meaning and concept, not just keywords.
 
-Speech-to-Text: OpenAI Whisper
+- **Human-in-the-Loop (HITL)**  
+  Provides API endpoints for human editors to review, edit, and approve content, with all versions tracked.
 
-Vector Database: ChromaDB (for versioning & semantic search)
+- **RLHF Data Pipeline**  
+  Automatically generates a preference dataset from human edits, ready to be used for fine-tuning AI models.
 
-Process Management: Python's multiprocessing for robust, isolated task execution.
+- **Voice-to-Text Commands**  
+  Includes an endpoint that uses OpenAI's Whisper model to transcribe voice commands for hands-free searching.
 
-Prerequisites
-Before you begin, ensure you have the following installed on your system:
+---
 
-Python 3.10+
+## 📡 API Endpoints
 
-Git
+| Method | Endpoint              | Description                                                                 |
+|--------|-----------------------|-----------------------------------------------------------------------------|
+| POST   | `/process-chapter/`   | Triggers the full, end-to-end automated workflow from scraping to AI review. |
+| GET    | `/search/`            | Performs a semantic search across all document versions using a text query. |
+| POST   | `/search/voice`       | Performs a semantic search by uploading a recorded audio file.              |
+| POST   | `/edit-chapter/`      | Allows a human to submit a final, edited version of a chapter.              |
+| GET    | `/dataset/preference` | Generates a preference dataset from human edits for RLHF training.          |
 
-ffmpeg (a system dependency for audio processing with Whisper)
+---
 
-Windows: choco install ffmpeg
+## 🛠 Project Setup & How to Run
 
-macOS: brew install ffmpeg
+### ✅ Prerequisites
 
-Linux: sudo apt update && sudo apt install ffmpeg
+- Python 3.10+
+- Git
+- ffmpeg (required for Whisper audio processing)
 
-Setup and Installation
-Follow these steps to get the project running locally.
+Install `ffmpeg`:
+- **Windows:** `choco install ffmpeg`
+- **macOS:** `brew install ffmpeg`
+- **Linux:** `sudo apt update && sudo apt install ffmpeg`
 
-Step 1: Clone the Repository
+---
 
+### 📥 Step-by-Step Instructions
+
+#### 1. Clone the Repository
+
+```bash
 git clone <your-repository-url>
 cd automated-book-publication
+```
 
-Step 2: Create and Activate a Virtual Environment
-This isolates the project's dependencies from your system's Python installation.
-
+#### 2. Create and Activate a Virtual Environment
+```bash
 python -m venv venv
+
 # On Windows:
-# venv\Scripts\activate
+venv\Scripts\activate
+
 # On macOS/Linux:
 source venv/bin/activate
+```
 
-Step 3: Install Dependencies
-Install all required Python libraries and download the necessary browser binaries for Playwright.
-
+#### 3. Install dependencies
+```bash
 pip install -r requirements.txt
 playwright install
+```
 
-Step 4: Set Up Environment Variables
-
-Create a file named .env in the root directory of the project.
-
-Sign up for a free API key from the Groq Console.
-
-Add your key to the .env file. This file is included in .gitignore and will not be committed to the repository.
-
+---
+### 🔐 Set Up Environment Variables
+- 1. Create a .env file in the root directory.
+- 2. Get your API key from the Groq Console (free signup).
+-3. Add your key to .env:
+```env
 GROQ_API_KEY="your-groq-api-key-goes-here"
+```
+- **Note:** .env is ignored by Git for security.
 
-How to Run the Application
-Step 1: Start the Backend Server
-With your virtual environment activated, run the following command from the project's root directory:
-
+---
+### ▶️ Start the Backend Server
+```bash
 uvicorn main:app --reload
+```
+- The --reload flag enables hot-reloading for development.
 
-The server will start and be accessible at http://127.0.0.1:8000. The --reload flag enables hot-reloading for development, automatically restarting the server when you save changes to a file.
+---
+### Access the Application
+- Open your browser and visit: http://127.0.0.1:8000/docs
+- Explore and test all API endpoints through Swagger UI.
 
-Step 2: Access the API Documentation
-This project uses FastAPI's automatically generated interactive documentation as its primary interface. Open your web browser and navigate to:
-http://127.0.0.1:8000/docs
+---
+### Stop the Application
+- To stop the server, press CTRL + C in the terminal where Uvicorn is running.
 
-You can now use this interactive page to explore and test all the API endpoints.
+---
+## License
+MIT
 
-API Endpoints
-The following endpoints are available for interaction via the /docs page:
+---
+## 🙌 Contributing
+- Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change 
 
-POST /process-chapter/: Triggers the full, end-to-end automated workflow from scraping to AI review.
 
-GET /search/: Performs a semantic search across all document versions using a text query.
-
-POST /search/voice: Performs a semantic search by uploading a recorded audio file.
-
-POST /edit-chapter/: Allows a human to submit a final, edited version of a chapter, completing the HITL workflow.
-
-GET /dataset/preference: Generates a preference dataset from all human edits, formatted for use in RLHF training pipelines.
